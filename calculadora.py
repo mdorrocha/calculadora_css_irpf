@@ -19,7 +19,11 @@ irpf_aliquota = {
     27.5: [4664.69, 4664.69],
 }
 
-salario = int(input('Entre com o salário: '))
+salario = int(input('Entre com o salário bruto: '))
+auxilio_saude = int(input('Informe o valor do auxílio saúde: '))
+auxilio_alimentacao = int(input('Informe o valor do auxílio alimentação: '))
+dependentes = int(input('Informe o número de dependentes: '))
+
 # contribuição para seguridade social
 css_a_pagar = 0
 
@@ -33,10 +37,10 @@ for key, value in css_aliquota.items():
         css_a_pagar += valor_remanescente * key / 100
         break
 
-print(css_a_pagar)
+print(f'Valor da contribuição à seguridade social: {css_a_pagar:.2f}')
 
 # irpf
-deducao_dependente = 3 * 189.59
+deducao_dependente = dependentes * 189.59
 irpf_a_pagar = 0
 base_calculo = salario - css_a_pagar - deducao_dependente
 valor_remanescente = base_calculo
@@ -49,12 +53,10 @@ for key, value in irpf_aliquota.items():
         irpf_a_pagar += valor_remanescente * key / 100
         break
 
-print(irpf_a_pagar)
+print(f'Valor do IRPf: {irpf_a_pagar:.2f}')
 
-auxilio_saude = 439
-auxilio_alimentacao = 458
 contribuicao_sindical = salario * 1 / 100
 
 salario_liquido = salario - css_a_pagar - irpf_a_pagar  - contribuicao_sindical + auxilio_saude + auxilio_alimentacao
 
-print(salario_liquido)
+print(f'Valor do salário líquido: {salario_liquido:.2f}')
