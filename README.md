@@ -6,7 +6,7 @@
 
 :small_blue_diamond: [Dados de entrada](#Dados-de-entrada)
 
-:small_blue_diamond: [Dados de saída](#Dados-de-saida)
+:small_blue_diamond: [Dados de saída](#Dados-de-saída)
 
 :small_blue_diamond: [Tecnologias utilizadas](#Tecnologias-utilizadas)
 
