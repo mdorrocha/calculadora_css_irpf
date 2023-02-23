@@ -1,5 +1,4 @@
 from . models import AliquotaCSS, AliquotaIRPF, TabelaIRPF
-from decimal import *
 from datetime import date
 from django.db.models import Max
 
@@ -8,8 +7,8 @@ from django.db.models import Max
 def calcular(dados):
     # contribuição para seguridade social
     css_a_pagar = 0
-    vencimento_basico = Decimal(dados.get('vencimento_basico'))
-    incentivo_qualificacao = Decimal(dados.get('incentivo_qualificacao'))
+    vencimento_basico = dados.get('vencimento_basico')
+    incentivo_qualificacao = dados.get('incentivo_qualificacao')
     rendimento_tributavel = vencimento_basico + incentivo_qualificacao
     valor_remanescente = rendimento_tributavel
     # obtem as aliquotas css
@@ -28,7 +27,7 @@ def calcular(dados):
     irpf_a_pagar = 0
     aliquotas_irpf = AliquotaIRPF.objects.filter(tabela_irpf__ano_vigencia=str(ano_atual))
     tabela_irpf = TabelaIRPF.objects.get(ano_vigencia=str(ano_atual))
-    deducao_dependente = Decimal(dados.get('total_dependentes')) * tabela_irpf.deducao_dependente_mes
+    deducao_dependente = dados.get('total_dependentes') * tabela_irpf.deducao_dependente_mes
     base_calculo = rendimento_tributavel - css_a_pagar - deducao_dependente
     valor_remanescente = base_calculo
     maior_aliquota = aliquotas_irpf.aggregate(Max('aliquota')).get('aliquota__max')
@@ -43,8 +42,8 @@ def calcular(dados):
     print(f'Valor do IRPf: {irpf_a_pagar:.2f}')
 
     contribuicao_sindical = rendimento_tributavel * 1 / 100
-    auxilio_alimentacao = Decimal(dados.get('auxilio_alimentacao'))
-    auxilio_saude = Decimal(dados.get('auxilio_saude'))
+    auxilio_alimentacao = dados.get('auxilio_alimentacao')
+    auxilio_saude = dados.get('auxilio_saude')
     rendimento_nao_tributavel = auxilio_alimentacao + auxilio_saude
     descontos = css_a_pagar + irpf_a_pagar + contribuicao_sindical
     salario_liquido = rendimento_tributavel + rendimento_nao_tributavel - descontos
