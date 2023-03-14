@@ -1,6 +1,7 @@
 from . models import AliquotaCSS, AliquotaIRPF, TabelaIRPF
 from datetime import date
 from django.db.models import Max
+from decimal import Decimal
 
 # contribuição previdenciária por alíquota
 
@@ -27,7 +28,10 @@ def calcular(dados):
     irpf_a_pagar = 0
     aliquotas_irpf = AliquotaIRPF.objects.filter(tabela_irpf__ano_vigencia=str(ano_atual))
     tabela_irpf = TabelaIRPF.objects.get(ano_vigencia=str(ano_atual))
-    deducao_dependente = dados.get('total_dependentes') * tabela_irpf.deducao_dependente_mes
+    total_dependentes = dados.get('total_dependentes')
+    if not total_dependentes:
+        total_dependentes = Decimal(0)
+    deducao_dependente = total_dependentes * tabela_irpf.deducao_dependente_mes
     base_calculo = rendimento_tributavel - css_a_pagar - deducao_dependente
     valor_remanescente = base_calculo
     maior_aliquota = aliquotas_irpf.aggregate(Max('aliquota')).get('aliquota__max')
@@ -55,7 +59,8 @@ def calcular(dados):
         'rendimento_nao_tributavel': round(rendimento_nao_tributavel, 2),
         'css_a_pagar': round(css_a_pagar, 2),
         'irpf_a_pagar': round(irpf_a_pagar, 2),
-        'salario_liquido': round(salario_liquido, 2)
+        'salario_liquido': round(salario_liquido, 2),
+        'total_dependentes': dados.get('total_dependentes')
     }
 
     return resultado
